@@ -23,9 +23,15 @@ export let FragmentShader;
 /** @typedef {{vertex: VertexShader, fragment: FragmentShader}} Shaders */
 export let Shaders;
 
-/** @type {Program} The currently rendering program */
+/**
+ * The currently rendering program
+ * @type {Program}
+ */
 let activeProgram = null;
-/** @type {Array<function(boolean):void>} Code to run when the active program is completed */
+/**
+ * Code to run when the active program is completed
+ * @type {Array<function(boolean):void>}
+ */
 let codeOnRenderEnd = null;
 
 /**
@@ -36,17 +42,23 @@ let codeOnRenderEnd = null;
  * objects that this Program supports
  */
 export class Program {
-  /** @private Use makeAndLinkProgram */
+  /**
+   * Use makeAndLinkProgram instead of constructing directly
+   * @private
+   */
   constructor(name, gl, glProgram, inputs) {
-    /** @const @type {string} */
+    /** @const {string} */
     this.name = name;
-    /** @const @type {!WebGL} */
+    /** @const {!WebGL} */
     this.gl = gl;
-    /** @const @type {Inputs} */
+    /** @const {Inputs} */
     this.inputs = inputs;
-    /** @const @package {!Set<ProgramInput>} */
+    /**
+     * @const {!Set<ProgramInput>}
+     * @package
+     */
     this.inputSet = new Set(Object.values(inputs));
-    /** @const @type {!WebGLProgram} */
+    /** @const {!WebGLProgram} */
     this.glProgram = glProgram;
   }
 }

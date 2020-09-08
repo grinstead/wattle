@@ -13,11 +13,18 @@ export class ProgramInput {
    * @param {string} shaderIdentifier - The name of the declaration within the shader
    */
   constructor(shaderIdentifier) {
-    /** @private {WebGL} */
+    /**
+     * @type {WebGL}
+     * @private
+     */
     this.maybeGL = null;
-    /** @private {WebGLUniformLocation} will be defined when maybeGL is non-null*/
+    /**
+     * This will be defined whenever maybeGL is non-null
+     * @type {WebGLUniformLocation}
+     * @private
+     */
     this.maybeLoc = null;
-    /** @const @type {string} The name of the declaration within the shader */
+    /** @const {string} shaderIdentifier The name of the declaration within the shader */
     this.shaderIdentifier = shaderIdentifier;
   }
 

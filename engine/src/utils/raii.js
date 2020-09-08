@@ -11,8 +11,9 @@
 const CLEANABLES = new Map();
 
 /**
- * This is defined if we are in a `runAndCleanOnError` call
- * @type {Array<function():void>} code
+ * This is defined if we are in a `runAndCleanOnError` call. It is an array of
+ * code to call when cleaning up.
+ * @type {Array<function():void>}
  */
 let activeCleanupCode = null;
 
