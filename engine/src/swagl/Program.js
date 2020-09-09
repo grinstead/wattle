@@ -47,19 +47,54 @@ export class Program {
    * @private
    */
   constructor(name, gl, glProgram, inputs) {
-    /** @const {string} */
+    /** @const @type {string} */
     this.name = name;
-    /** @const {!WebGL} */
+    /** @const @type {!WebGL} */
     this.gl = gl;
-    /** @const {Inputs} */
+    /** @const @type {Inputs} */
     this.inputs = inputs;
-    /**
-     * @const {!Set<ProgramInput>}
-     * @package
-     */
+    /** @package @const @type {!Set<!ProgramInput>} */
     this.inputSet = new Set(Object.values(inputs));
-    /** @const {!WebGLProgram} */
+    /** @const @type {!WebGLProgram} */
     this.glProgram = glProgram;
+    /** @private @const @type {!Map<string, number>} */
+    this.attributes = new Map();
+    /** @private @const @type {!Map<string, !WebGLUniformLocation>} */
+    this.uniforms = new Map();
+  }
+
+  /**
+   * Returns the WebGL identifier for the attribute of a given name. This will
+   * throw if no such attribute exists.
+   * @param {string} name
+   * @returns number
+   */
+  attr(name) {
+    const cached = this.attributes.get(name);
+    if (cached != null) return cached;
+
+    const attr = this.gl.getAttribLocation(this.glProgram, name);
+    if (attr === -1) throw new Error(`Unknown attribute "${name}"`);
+
+    this.attributes.set(name, attr);
+    return attr;
+  }
+
+  /**
+   * Returns the reference location for the given uniform value. This will throw
+   * an error if no such value exists.
+   * @param {string} name
+   * @returns !WebGLUniformLocation
+   */
+  uniform(name) {
+    const cached = this.uniforms.get(name);
+    if (cached) return cached;
+
+    const uniform = this.gl.getUniformLocation(this.glProgram, name);
+    if (uniform == null) throw new Error(`Unknown uniform value "${name}"`);
+
+    this.uniforms.set(name, uniform);
+    return uniform;
   }
 }
 
@@ -100,7 +135,7 @@ export function renderInProgram(program, code) {
         try {
           onEnd(didError);
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       });
     }

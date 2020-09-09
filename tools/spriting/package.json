@@ -3,7 +3,7 @@
     "startWithEngine": "yarn start \"../../engine/src/**/*.js\"",
     "start": "chokidar \"src/**/*.js\" -c \"yarn build\"",
     "compile_base": "yarn google-closure-compiler --js='../../engine/src/**.js' --js='src/**.js' --js_output_file=bin/compiled.js --language_out=ECMASCRIPT_2019 --strict_mode_input --assume_function_wrapper --entry_point=src/exe.js --dependency_mode=PRUNE",
-    "build": "yarn compile_base --compilation_level=BUNDLE",
+    "build": "yarn compile_base --compilation_level=SIMPLE",
     "release": "yarn compile_base --compilation_level=ADVANCED"
   },
   "devDependencies": {

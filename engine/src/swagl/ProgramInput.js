@@ -47,17 +47,9 @@ export class ProgramInput {
       throw new Error("ProgramInput.set called during a different program");
     }
 
-    gl = program.gl;
-
-    const loc = gl.getUniformLocation(program.glProgram, this.shaderIdentifier);
-    if (loc == null) {
-      throw new Error(
-        `No Uniform Variable ${this.shaderIdentifier} within ${program.name}`
-      );
-    }
-
-    this.maybeGL = gl;
-    this.maybeLoc = loc;
+    // might throw if the value is not in the shader
+    this.maybeLoc = program.uniform(this.shaderIdentifier);
+    this.maybeGL = program.gl;
 
     // make the system reset after the render, so that we re-check the next time around
     onRenderComplete(() => {
@@ -121,7 +113,7 @@ export class Mat4fv extends ProgramInput {
 /**
  * Returns the active gl, or throws an error if there is no active program or
  * the active program does not have this input.
- * @param {ProgramInput} input
+ * @param {!ProgramInput} input
  * @returns {!WebGL}
  */
 function getGLAndCheckProgram(input) {

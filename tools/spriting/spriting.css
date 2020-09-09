@@ -5,17 +5,14 @@ body {
 
 #full {
   position: relative;
-  width: 1280px;
-  height: 640px;
+  width: 640px;
+  height: 320px;
   margin: auto;
   box-shadow: 0px 0px 10px #181828;
 }
 
 canvas {
-  width: 1280px;
-  height: 640px;
-  background-color: #000000;
-  /* cursor: none; */
-  opacity: 0;
-  transition: opacity 2000ms;
+  width: 640px;
+  height: 320px;
+  /* background-color: #000000; */
 }
