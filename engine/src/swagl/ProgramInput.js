@@ -59,6 +59,17 @@ export class ProgramInput {
   }
 }
 
+export class SingleInt extends ProgramInput {
+  /**
+   * Sets the value in the shader to the given arg
+   * @param {number} value The new int value to set it to
+   */
+  set(value) {
+    this.loadGL();
+    this.maybeGL.uniform1i(this.maybeLoc, value);
+  }
+}
+
 export class Mat4fv extends ProgramInput {
   /**
    * Sets the matrix to the given args
