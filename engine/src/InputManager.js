@@ -16,6 +16,7 @@ export class InputManager {
     this._inFocus = document.activeElement === domElement;
     this._presses = new Map();
     this._actionToKeys = new Map();
+    this._keyToAction = new Map();
 
     domElement.addEventListener("keydown", (e) => {
       keyChanged(this, e, true);
@@ -40,8 +41,20 @@ export class InputManager {
    */
   setKeysForAction(action, keys) {
     const actionToKeys = this._actionToKeys;
+    const prevKeys = actionToKeys.get(action);
+
+    const keyToAction = this._keyToAction;
+    if (prevKeys) {
+      prevKeys.forEach((key) => {
+        keyToAction.delete(key);
+      });
+    }
+
     if (keys != null) {
       actionToKeys.set(action, keys);
+      keys.forEach((key) => {
+        keyToAction.set(key, action);
+      });
     } else {
       actionToKeys.delete(action);
     }
@@ -109,6 +122,11 @@ export class InputManager {
  */
 function keyChanged(manager, event, isPressed) {
   const key = event.key;
+  if (manager._keyToAction.has(key)) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
   const presses = manager._presses;
   const object = presses.get(key);
   if (isPressed) {
