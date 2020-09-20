@@ -171,6 +171,41 @@ export function subrender(code) {
   }
 }
 
+/**
+ * Calls the code function (synchronously) with the given argument and the active gl. Any
+ * matrix operations pushed onto the stack by the code function will be popped.
+ * @template T
+ * @param {function(T,WebGL):void} code
+ * @param {T} arg
+ */
+export function subrenderWithArg(code, arg) {
+  const input = assertInputNotNull();
+  const preRunLength = matrixStack.length;
+
+  try {
+    code(arg, getProgram().gl);
+  } finally {
+    const diff = matrixStack.length - preRunLength;
+    if (diff !== 0) {
+      for (let i = 0; i < diff; ++i) matrixStack.pop();
+      input.setMatrix(matrixStack[preRunLength - 1]);
+    }
+  }
+}
+
+/**
+ * Calls the code function (synchronously) with each element in the list. Any
+ * matrix operations pushed onto the stack by the code function will be popped.
+ * @template T
+ * @param {!Array<T>} items
+ * @param {function(T,WebGL):void} code
+ */
+export function subrenderEach(items, code) {
+  items.forEach((item) => {
+    subrenderWithArg(code, item);
+  });
+}
+
 function lastInStack() {
   return matrixStack[matrixStack.length - 1];
 }
