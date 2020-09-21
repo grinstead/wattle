@@ -32,6 +32,7 @@ export function useMatrixStack(input) {
   });
 
   activeInput = input;
+  input.setMatrix(IDENTITY);
 }
 
 /**
@@ -95,6 +96,12 @@ export function applyMatrixOperation(A) {
   activeInput.setMatrix(matrix);
 }
 
+/**
+ * Shifts the rendered content along each of the axes
+ * @param {number} x
+ * @param {number} y
+ * @param {number} z
+ */
 export function shiftContent(x, y, z) {
   const A = lastInStack();
   applyAbsoluteMatrixOperation(
@@ -111,6 +118,10 @@ export function shiftContent(x, y, z) {
   );
 }
 
+/**
+ * Rotates the rendered content around the y-axis
+ * @param {number} angle
+ */
 export function rotateAboutY(angle) {
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
@@ -125,6 +136,10 @@ export function rotateAboutY(angle) {
   );
 }
 
+/**
+ * Rotates the rendered content around the Z axis
+ * @param {number} angle
+ */
 export function rotateAboutZ(angle) {
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
@@ -139,6 +154,13 @@ export function rotateAboutZ(angle) {
   );
 }
 
+/**
+ * Multiply each axis by the given constant. -1 will mirror an axis, 1 will keep
+ * it the same.
+ * @param {number} x
+ * @param {number} y
+ * @param {number} z
+ */
 export function scaleAxes(x, y, z) {
   applyMatrixOperation(
     // prettier-ignore
