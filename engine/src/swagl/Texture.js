@@ -1,4 +1,5 @@
 import { WebGL } from "./types.js";
+import { onCleanUp } from "../utils/raii.js";
 
 /**
  * Wraps a WebGL texture.
@@ -38,6 +39,19 @@ export class Texture {
  * @returns {Promise<Texture>} The loaded texture
  */
 export function loadTextureFromImgUrl(options) {
+  return loadTextureFromImgUrlTwoStages(options).then((stage2) =>
+    stage2(options.gl)
+  );
+}
+
+/**
+ * Loads a texture from the internet
+ * @param {Object} options
+ * @param {string} options.src - The url of the image (must be on the same domain)
+ * @param {string} options.name - The name of the resultant Texture (for debugging)
+ * @returns {Promise<function(WebGL):Texture>} The loaded texture
+ */
+export function loadTextureFromImgUrlTwoStages(options) {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => void resolve(image);
@@ -46,12 +60,12 @@ export function loadTextureFromImgUrl(options) {
     };
     image.mode = "no-cors";
     image.src = options.src;
-  }).then((img) => {
+  }).then((img) => (gl) => {
     const width = img.naturalWidth;
     const height = img.naturalHeight;
 
     return new Texture(
-      options.gl,
+      gl,
       options.name,
       width,
       height,
@@ -127,8 +141,10 @@ export function wrapPremadeTexture(options) {
 }
 
 function createStandardTexture(loader) {
-  return (gl) => {
+  return (/** @type {WebGL} */ gl) => {
     const texture = gl.createTexture();
+    onCleanUp(() => void gl.deleteTexture(texture));
+
     gl.bindTexture(gl.TEXTURE_2D, texture);
     loader(gl);
     // set the filtering so we don't need mips
