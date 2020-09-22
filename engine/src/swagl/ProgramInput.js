@@ -70,6 +70,20 @@ export class SingleInt extends ProgramInput {
   }
 }
 
+export class Vec4Float extends ProgramInput {
+  /**
+   * Sets the value in the shader to the given args
+   * @param {number} x
+   * @param {number} y
+   * @param {number} z
+   * @param {number} w
+   */
+  set(x, y, z, w) {
+    this.loadGL();
+    this.maybeGL.uniform4f(this.maybeLoc, x, y, z, w);
+  }
+}
+
 export class Mat4fv extends ProgramInput {
   /**
    * Sets the matrix to the given args
