@@ -14,6 +14,8 @@ const IDENTITY = new Float32Array([
 let activeInput = null;
 /** @type {!Array<Float32Array>} */
 const matrixStack = [IDENTITY];
+/** @type {Array<function()>} */
+const toCallAfterSubrender = [];
 
 /**
  *
@@ -174,6 +176,15 @@ export function scaleAxes(x, y, z) {
 }
 
 /**
+ *
+ * @param {function():void} code
+ */
+export function afterSubrender(code) {
+  assertInputNotNull();
+  toCallAfterSubrender.push(code);
+}
+
+/**
  * Calls the code function (synchronously) with the active gl argument. Any
  * matrix operations pushed onto the stack by the code function will be popped.
  * @param {function(WebGL):void} code
@@ -181,6 +192,7 @@ export function scaleAxes(x, y, z) {
 export function subrender(code) {
   const input = assertInputNotNull();
   const preRunLength = matrixStack.length;
+  const before = toCallAfterSubrender.length;
 
   try {
     code(getProgram().gl);
@@ -189,6 +201,11 @@ export function subrender(code) {
     if (diff !== 0) {
       for (let i = 0; i < diff; ++i) matrixStack.pop();
       input.setMatrix(matrixStack[preRunLength - 1]);
+    }
+
+    // I am not as careful with the errors here
+    while (before < toCallAfterSubrender.length) {
+      toCallAfterSubrender.pop()();
     }
   }
 }
@@ -203,6 +220,7 @@ export function subrender(code) {
 export function subrenderWithArg(code, arg) {
   const input = assertInputNotNull();
   const preRunLength = matrixStack.length;
+  const before = toCallAfterSubrender.length;
 
   try {
     code(arg, getProgram().gl);
@@ -211,6 +229,11 @@ export function subrenderWithArg(code, arg) {
     if (diff !== 0) {
       for (let i = 0; i < diff; ++i) matrixStack.pop();
       input.setMatrix(matrixStack[preRunLength - 1]);
+    }
+
+    // I am not as careful with the errors here
+    while (before < toCallAfterSubrender.length) {
+      toCallAfterSubrender.pop()();
     }
   }
 }
