@@ -1,5 +1,5 @@
 # wattle
-An engine for in-browser game-jam games.
+An experimental engine for in-browser game-jam games.
 
 I like learning how things work, so I'm developing game-jam games without using a prior engine, and instead building up a set of tools from the ground up.
 
